@@ -82,12 +82,20 @@ public class Parser {
         /* El codigo de esta seccion se explicara en clase */
 
         switch(op.getId()) {
+            case Token.POW: // para potencia
+                return 4;
+            case Token.MULT: //para la multiplicacion 
+                return 3;
+            case Token.DIV:  //para division
+                return 3;
+            case Token.MOD:  //modulo 
+                return 3;
         	case Token.PLUS:
-        		return 1;
-        	case Token.MULT:
+        		return 2;
+        	case Token.MINUS:
         		return 2;
         	default:
-        		return -1;
+        		return 0;  // PARENTESIS
         }
     }
 
