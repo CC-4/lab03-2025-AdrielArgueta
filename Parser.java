@@ -82,8 +82,8 @@ public class Parser {
         /* El codigo de esta seccion se explicara en clase */
 
         switch(op.getId()) {
-            case Token.POW: // para potencia
-                return 4;
+            /*case Token.POW: // para potencia
+                return 4;*/
             case Token.MULT: //para la multiplicacion 
                 return 3;
             case Token.DIV:  //para division
@@ -103,6 +103,26 @@ public class Parser {
         Token op = this.operadores.pop();
 
         /* TODO: Su codigo aqui */
+        int id = op.getId();
+        if(id == Token.MINUS || id == Token.DIV || id == Token.MOD /*|| id == Token.POW*/){
+            if(this.operandos.size()<2){
+                throw new RuntimeException("Falto operando para operador Binario");
+            }
+
+            double der = this.operandos.pop(); // operador derecho
+            double izq = this.operandos.pop(); // operador izquierda
+            
+            if(id == Token.MINUS){
+                this.operandos.push(izq - der);
+            } else if(id == Token.DIV){
+                this.operandos.push(izq / der);
+            } else if(id == Token.MOD){
+                this.operandos.push(izq % der);
+            }
+
+            return;
+        
+        }
 
         /* El codigo de esta seccion se explicara en clase */
 
