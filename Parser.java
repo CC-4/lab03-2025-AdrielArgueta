@@ -29,17 +29,26 @@ public class Parser {
 
         // Recursive Descent Parser
         // Imprime si el input fue aceptado
-        System.out.println("Aceptada? " + S());
-
-        // Shunting Yard Algorithm
-        // Imprime el resultado de operar el input
-        // System.out.println("Resultado: " + this.operandos.peek());
+        // System.out.println("Aceptada? " + S());
+        boolean ok = S();
+        if (ok) {
+            while (!this.operadores.empty()) {
+                popOp();
+            }
+            if (!this.operandos.empty()) {
+                System.out.println(this.operandos.peek());
+            } else {
+                System.out.println("BAD INPUT");
+            }
+        } else {
+            System.out.println("BAD INPUT");
+        }
 
         // Verifica si terminamos de consumir el input
         if(this.next != this.tokens.size()) {
             return false;
         }
-        return true;
+        return ok;
     }
 
     // Verifica que el id sea igual que el id del token al que apunta next
@@ -129,14 +138,10 @@ public class Parser {
         if (op.equals(Token.PLUS)) {
         	double a = this.operandos.pop();
         	double b = this.operandos.pop();
-        	// print para debug, quitarlo al terminar
-        	System.out.println("suma " + a + " + " + b);
         	this.operandos.push(a + b);
         } else if (op.equals(Token.MULT)) {
         	double a = this.operandos.pop();
         	double b = this.operandos.pop();
-        	// print para debug, quitarlo al terminar
-        	System.out.println("mult " + a + " * " + b);
         	this.operandos.push(a * b);
         }
     }
@@ -166,10 +171,6 @@ public class Parser {
                 break;
             }
         }
-
-        // Al terminar operaciones pendientes, guardamos op en stack
-        this.operadores.push(op);
-
         /* Casi todo el codigo para esta seccion se vera en clase */
     	
     	// Si no hay operandos automaticamente ingresamos op al stack
@@ -181,6 +182,8 @@ public class Parser {
         	// Es posible que necesitemos un ciclo aqui, una vez tengamos varios niveles de precedencia
         	// Al terminar operaciones pendientes, guardamos op en stack
 
+        // Al terminar operaciones pendientes, guardamos op en stack
+        this.operadores.push(op);
     }
 
 private boolean S() {
