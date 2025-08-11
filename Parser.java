@@ -144,6 +144,26 @@ public class Parser {
     private void pushOp(Token op) {
         /* TODO: Su codigo aqui */
 
+        /*si la pila esta vacia solo empujamos */
+        if(this.operadores.empty()){
+            this.operadores.push(op);
+        }
+
+        while(!this.operadores.empty()){
+            Token top = this.operadores.peek();
+            if(top.getId() == Token.LPAREN) break;
+
+            int pTop = pre(top);
+            int pIn = pre(top);
+
+            if(pTop > pIn){
+                popOp();
+            } else if(pTop == pIn && op.getId() != Token.POW){
+                popOp();
+            }else{
+                break;
+            }
+        }
         /* Casi todo el codigo para esta seccion se vera en clase */
     	
     	// Si no hay operandos automaticamente ingresamos op al stack
@@ -157,13 +177,58 @@ public class Parser {
 
     }
 
-    private boolean S() {
-        return E() && term(Token.SEMI);
-    }
+private boolean S() {
+    return E() && term(Token.SEMI);
+}
 
-    private boolean E() {
-        return false;
-    }
+private boolean E() {
+    boolean expectValue = true;
+    while (this.next < this.tokens.size()) {
+        Token t = this.tokens.get(this.next);
+        int id = t.getId();
 
-    /* TODO: sus otras funciones aqui */
+        if (id == Token.SEMI) {
+            if (expectValue) return false;
+            while (!this.operadores.empty()) {
+                popOp();
+            }
+            return true;
+        }
+
+        if (expectValue) {
+            if (id == Token.NUMBER) {
+                this.operandos.push(t.getVal());
+                this.next++;
+                expectValue = false;
+            } else if (id == Token.LPAREN) {
+                this.operadores.push(t);
+                this.next++;
+            } else if (id == Token.MINUS) {
+                this.operandos.push(0.0);
+                pushOp(t);
+                this.next++;
+            } else {
+                return false;
+            }
+        } else {
+            if (isBinaryOp(t)) {
+                pushOp(t);
+                this.next++;
+                expectValue = true;
+            } else if (id == Token.RPAREN) {
+                while (!this.operadores.empty() && this.operadores.peek().getId() != Token.LPAREN) {
+                    popOp();
+                }
+                if (this.operadores.empty()) return false;
+                this.operadores.pop();
+                this.next++;
+                expectValue = false;
+            } else {
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
 }
