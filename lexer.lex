@@ -83,7 +83,7 @@ import java.io.IOException;
 %type Token
 
 DIGIT  = [0-9]
-NUMBER = {DIGIT}+\.{DIGIT}+ | {DIGIT}+
+NUMBER = {DIGIT}+(\.{DIGIT}+)?
 
 SEMI   = ";"
 PLUS   = "+"
