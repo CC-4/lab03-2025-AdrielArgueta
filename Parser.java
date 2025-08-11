@@ -147,6 +147,7 @@ public class Parser {
         /*si la pila esta vacia solo empujamos */
         if(this.operadores.empty()){
             this.operadores.push(op);
+            return;
         }
 
         while(!this.operadores.empty()){
@@ -154,16 +155,21 @@ public class Parser {
             if(top.getId() == Token.LPAREN) break;
 
             int pTop = pre(top);
-            int pIn = pre(top);
+            int pIn  = pre(op); // ojo: comparar contra op
 
+            // operadores binarios aquí son izquierda-asociativos (sin potencia)
             if(pTop > pIn){
                 popOp();
-            } else if(pTop == pIn && op.getId() != Token.POW){
+            } else if(pTop == pIn){
                 popOp();
-            }else{
+            } else{
                 break;
             }
         }
+
+        // Al terminar operaciones pendientes, guardamos op en stack
+        this.operadores.push(op);
+
         /* Casi todo el codigo para esta seccion se vera en clase */
     	
     	// Si no hay operandos automaticamente ingresamos op al stack
@@ -230,5 +236,17 @@ private boolean E() {
     }
     return false;
 }
+
+    // Helper para reconocer operadores binarios usados en E()
+    private boolean isBinaryOp(Token t) {
+        if (t == null) return false;
+        int id = t.getId();
+        return id == Token.PLUS
+            || id == Token.MINUS
+            || id == Token.MULT
+            || id == Token.DIV
+            || id == Token.MOD;
+        // Si luego activas potencia (^), agrega aquí su ID.
+    }
 
 }
